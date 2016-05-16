@@ -1,0 +1,9 @@
+sql-scheduler:
+    triggers:
+      - '* * * * * *'
+    queries: 
+      -
+        statement: 'SELECT * FROM customers'
+      - 
+        statement: 'SELECT * FROM customers'
+        resultFile:
