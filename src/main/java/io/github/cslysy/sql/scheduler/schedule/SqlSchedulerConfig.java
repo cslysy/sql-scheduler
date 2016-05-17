@@ -1,7 +1,6 @@
 package io.github.cslysy.sql.scheduler.schedule;
 
 import io.github.cslysy.sql.scheduler.core.ApplicationConfig;
-import io.github.cslysy.sql.scheduler.sql.SqlTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -10,18 +9,18 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
 /**
- * Runs predefiend SQL statements according to defined schedule.
+ * Scheduling configuration.
  * 
  * @author cslysy <jakub.sprega@gmail.com>
  */
 @Component
-public class SqlScheduler implements SchedulingConfigurer {
+public class SqlSchedulerConfig implements SchedulingConfigurer {
     
     private final ApplicationConfig config;
     private final ApplicationContext context;
 
     @Autowired
-    public SqlScheduler(ApplicationConfig config, ApplicationContext context) {
+    public SqlSchedulerConfig(ApplicationConfig config, ApplicationContext context) {
         this.config = config;
         this.context = context;
     }

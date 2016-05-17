@@ -1,60 +1,92 @@
 package io.github.cslysy.sql.scheduler.sql;
 
-import com.google.common.collect.ImmutableMap;
+import io.github.cslysy.sql.scheduler.core.ApplicationConfig;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 /**
- * Serialize {@link ResultSet} to coma separated CSV file
+ * Serialize {@link ResultSet} into plain file.
  *
  * @author cslysy <jakub.sprega@gmail.com>
  */
 @Component
 public class DefaultResultSetSerializer {
 
-    @Autowired
-    private VelocityEngine velocityEngine;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public void serialize(ResultSet resultSet, String fileLocation) throws IOException, SQLException {
-        try (FileWriter fw = new FileWriter(fileLocation)) {
-            Map<String, Object> model = ImmutableMap.<String, Object>builder()
-                .put("query", resultSet.getStatement())
-                .put("result", resultSetToMap(resultSet))
-                .put("metaInfo", resultSet.toString())
-                .build();
-                
+    private final VelocityEngine velocityEngine;
+
+    private final ApplicationConfig config;
+
+    @Autowired
+    public DefaultResultSetSerializer(VelocityEngine velocityEngine, ApplicationConfig config) {
+        this.velocityEngine = velocityEngine;
+        this.config = config;
+    }
+
+    /**
+     * Serializes given ResultSet into file.
+     *
+     * @param resultSet result set to be serialized
+     * @param fileName name of the file where result set will be serialized
+     * @throws Exception
+     */
+    public void serialize(ResultSet resultSet, String fileName) throws Exception {
+        createQueryLogsDirectory();
+        String fileNameWithTimestamp = buildFileName(fileName);
+        logger.info("Serializing query result into : {}", fileNameWithTimestamp);
+       
+        try (FileWriter fileWriter = new FileWriter(fileNameWithTimestamp)) {
+            Map<String, Object> model = new HashMap<>();
+            model.put("query", resultSet.getStatement().toString());
+            model.put("rows", resultSetToList(resultSet));
+            model.put("rowsAffected", resultSet.getStatement().getUpdateCount());
+
             VelocityEngineUtils.mergeTemplate(
                 velocityEngine, "sql-result.vm",
-                StandardCharsets.UTF_8.toString(), model, fw
+                StandardCharsets.UTF_8.toString(),
+                model, fileWriter
             );
         }
     }
 
-    private Map<String, List<Object>> resultSetToMap(ResultSet rs) throws SQLException {
-        ResultSetMetaData md = rs.getMetaData();
-        int columns = md.getColumnCount();
-        Map<String, List<Object>> map = new HashMap<>(columns);
-        for (int i = 1; i <= columns; ++i) {
-            map.put(md.getColumnName(i), new ArrayList<>());
-        }
-        while (rs.next()) {
-            for (int i = 1; i <= columns; ++i) {
-                map.get(md.getColumnName(i)).add(rs.getObject(i));
+    private List<List<String>> resultSetToList(ResultSet resultset) throws SQLException {
+        int columnCount = resultset.getMetaData().getColumnCount();
+        List<List<String>> result = new ArrayList<>();
+        while (resultset.next()) {
+            List<String> row = new ArrayList<>(columnCount);
+            for (int i = 1; i <= columnCount; i++) {
+                row.add(resultset.getString(i));
             }
+            result.add(row);
         }
-        return map;
+        return result;
     }
 
+    private String buildFileName(String fileName) {
+        return String.format(
+            "%s/%s-%s", config.getQueryLogsDirectory(),
+            DateTimeFormatter.ISO_INSTANT.format(Instant.now()), fileName
+        );
+    }
+
+    private void createQueryLogsDirectory() throws IOException {
+        new File(config.getQueryLogsDirectory()).mkdirs();
+    }
 }

@@ -1,9 +1,15 @@
 sql-scheduler:
+    queryLogsDirectory: query-logs
+    
     triggers:
-      - '* * * * * *'
-    queries: 
-      -
-        statement: 'SELECT * FROM customers'
-      - 
-        statement: 'SELECT * FROM customers'
-        resultFile:
+      #Every 3 seconds
+      - '*/3 * * * * *' 
+      #Every day at 19:54
+      - '0 54 19 * * ?'
+      #On the hour nine-to-five weekdays
+      - "0 0 9-17 * * MON-FRI"
+    queries:          
+      - statement: "SELECT 1"
+        resultFile: "select-1.txt"
+     
+      - statement: "SELECT 2"

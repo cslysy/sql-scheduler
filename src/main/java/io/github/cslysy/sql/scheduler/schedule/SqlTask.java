@@ -1,12 +1,11 @@
-package io.github.cslysy.sql.scheduler.sql;
+package io.github.cslysy.sql.scheduler.schedule;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import io.github.cslysy.sql.scheduler.sql.SqlExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Runs SQL statements.
+ * {@link SqlExecutor} wrapper - required by Spring.
  * 
  * @author cslysy <jakub.sprega@gmail.com>
  */
@@ -21,7 +20,7 @@ public class SqlTask implements Runnable {
         try {
             sqlExecutor.execute();
         } catch (Exception ex) {
-            Logger.getLogger(SqlTask.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Could not execute SQL queries", ex);
         }
     }
 }

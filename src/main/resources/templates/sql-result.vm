@@ -1,7 +1,6 @@
-Query: $query
+Statement: $query
 
 Result:
-$result
-
-Meta info:
-$metaInfo
+#foreach($row in $rows)
+$row
+#end
