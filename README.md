@@ -7,10 +7,10 @@ Sql-scheduler is an application that runs predefined SQL queries according to th
 
   * Java 8+ installed
 
-### Step 1 - clone repository
+### Build and running
+    
     git clone https://github.com/cslysy/sql-scheduler.git
-
-### Step 2 - Build and run
+    cd sql-scheduler
     ./gradlew bootRun
 
 ## Configuration
