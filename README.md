@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cslysy/sql-scheduler.svg)](https://travis-ci.org/cslysy/sql-scheduler)
+
 # sql-scheduler
 Sql-scheduler is an application that runs predefined SQL queries according to the configured schedule.
 
@@ -8,7 +10,7 @@ Sql-scheduler is an application that runs predefined SQL queries according to th
   * Java 8+ installed
 
 ### Build and running
-    
+
     git clone https://github.com/cslysy/sql-scheduler.git
     cd sql-scheduler
     ./gradlew bootRun
@@ -47,7 +49,7 @@ sql-scheduler:
 ```
 
 ### Queries
-It is possible to define SELECT, UPDATE, INSERT and DELETE queries. In addition result of each query can be saved into the file within defined query logs directory.
+It is possible to define SELECT, UPDATE, INSERT and DELETE queries. In addition, result of each query can be saved into the file within defined query logs directory.
 
 Example configuration:
 ```yaml
