@@ -1,6 +1,6 @@
 package io.github.cslysy.sql.scheduler.sql;
 
-import io.github.cslysy.sql.scheduler.core.ApplicationConfig;
+import io.github.cslysy.sql.scheduler.ApplicationConfig;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,11 +31,11 @@ public class DefaultResultSetSerializer {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final VelocityEngine velocityEngine;
-
     private final ApplicationConfig config;
 
     @Autowired
-    public DefaultResultSetSerializer(VelocityEngine velocityEngine, ApplicationConfig config) {
+    public DefaultResultSetSerializer(final VelocityEngine velocityEngine,
+        final ApplicationConfig config) {
         this.velocityEngine = velocityEngine;
         this.config = config;
     }
@@ -47,13 +47,13 @@ public class DefaultResultSetSerializer {
      * @param fileName name of the file where result set will be serialized
      * @throws Exception
      */
-    public void serialize(ResultSet resultSet, String fileName) throws Exception {
+    public void serialize(final ResultSet resultSet, final String fileName) throws Exception {
         createQueryLogsDirectory();
-        String fileNameWithTimestamp = buildFileName(fileName);
+        final String fileNameWithTimestamp = buildFileName(fileName);
         logger.info("Serializing query result into : {}", fileNameWithTimestamp);
        
         try (FileWriter fileWriter = new FileWriter(fileNameWithTimestamp)) {
-            Map<String, Object> model = new HashMap<>();
+            final Map<String, Object> model = new HashMap<>();
             model.put("query", resultSet.getStatement().toString());
             model.put("rows", resultSetToList(resultSet));
             model.put("rowsAffected", resultSet.getStatement().getUpdateCount());
@@ -66,11 +66,11 @@ public class DefaultResultSetSerializer {
         }
     }
 
-    private List<List<String>> resultSetToList(ResultSet resultset) throws SQLException {
-        int columnCount = resultset.getMetaData().getColumnCount();
-        List<List<String>> result = new ArrayList<>();
+    private List<List<String>> resultSetToList(final ResultSet resultset) throws SQLException {
+        final int columnCount = resultset.getMetaData().getColumnCount();
+        final List<List<String>> result = new ArrayList<>();
         while (resultset.next()) {
-            List<String> row = new ArrayList<>(columnCount);
+            final List<String> row = new ArrayList<>(columnCount);
             for (int i = 1; i <= columnCount; i++) {
                 row.add(resultset.getString(i));
             }
@@ -79,10 +79,12 @@ public class DefaultResultSetSerializer {
         return result;
     }
 
-    private String buildFileName(String fileName) {
+    private String buildFileName(final String fileName) {   
         return String.format(
-            "%s/%s-%s", config.getQueryLogsDirectory(),
-            DateTimeFormatter.ISO_INSTANT.format(Instant.now()), fileName
+            "%s/%s-%s", 
+            config.getQueryLogsDirectory(),
+            DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+            fileName
         );
     }
 

@@ -31,7 +31,6 @@ dependencies {
     compile("com.h2database:h2")
     compile("org.apache.velocity:velocity")
     compile("org.springframework:spring-context-support")
-    compile("com.google.guava:guava:18.0")
     testCompile("junit:junit")
 }
 

@@ -1,4 +1,4 @@
-package io.github.cslysy.sql.scheduler.core;
+package io.github.cslysy.sql.scheduler;
 
 import java.util.List;
 import java.util.Optional;

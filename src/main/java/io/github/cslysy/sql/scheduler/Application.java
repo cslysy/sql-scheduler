@@ -1,4 +1,4 @@
-package io.github.cslysy.sql.scheduler.core;
+package io.github.cslysy.sql.scheduler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
